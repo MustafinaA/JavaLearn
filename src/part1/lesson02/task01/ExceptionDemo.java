@@ -22,18 +22,18 @@ public class ExceptionDemo {
         try {
             throw new NullPointerException();
         } catch (NullPointerException e) {
-            System.out.println("Исключение "+e.getClass().getName()+" передано явно и перехвачено");
+            System.out.println("Исключение "+e.getClass().getName()+" передано явно и перехвачено.");
         }
         for (int i = 0; i < strArr.length; i++) {
             try {
                 System.out.println(strArr[i].equals(strArr[i + 1]));
             } catch (NullPointerException e) {
-                System.out.println("Исключение NullPointerException смоделировано и перехвачено");
+                System.out.println("Исключение NullPointerException смоделировано и перехвачено.");
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Исключение ArrayIndexOutOfBoundsException смоделировано и перехвачено");
+                System.out.println("Исключение ArrayIndexOutOfBoundsException смоделировано и перехвачено.");
             } finally {
                 if (i == strArr.length - 1) {
-                    throw new MyException("Свой вариант ошибки");
+                    throw new MyException("Свой вариант ошибки.");
                 }
             }
         }
