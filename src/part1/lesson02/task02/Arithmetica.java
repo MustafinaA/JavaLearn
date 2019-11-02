@@ -20,7 +20,7 @@ public class Arithmetica {
 
     public static void main(String[] args) {
         for (int i = 0; i < N; i++) {
-            long k = (int) (100.0 * (Math.random() * 2 - 1));
+            long k = (long) (100.0 * (Math.random() * 2 - 1));
             try {
                 if (k > 0) {
                     double q = Math.sqrt(k);
