@@ -23,7 +23,7 @@ public class MergeSort {
      * @return - отсортированный массив
      * @throws Exception - ошибка из метода mergeSort
      */
-    public Person[] compareTo() throws Exception {
+    public Person[] sort() throws Exception {
         mergeSort(arr, arr.length);
         return arr;
     }
@@ -64,18 +64,23 @@ public class MergeSort {
     private void merge(Person[] a, Person[] l, Person[] r, int left, int right) throws Exception {
         int i = 0, j = 0, k = 0;
         while (i < left && j < right) {
-            if (l[i].getAge() == r[j].getAge() && l[i].getName().equals(r[j].getName())) {
-                throw new Exception(l[i].toString());
-            }
-            if (
-                    l[i].getSex() == Person.Sex.MAN && r[j].getSex() == Person.Sex.WOMAN ||
-                            l[i].getSex().equals(r[j].getSex()) && l[i].getAge() > r[j].getAge() ||
-                            l[i].getSex().equals(r[j].getSex()) && l[i].getAge() == r[j].getAge() && l[i].getName().compareTo(r[j].getName()) < 0
-            ) {
+            if(l[i].compareTo(r[j])==1){
                 a[k++] = l[i++];
             } else {
                 a[k++] = r[j++];
             }
+//            if (l[i].getAge() == r[j].getAge() && l[i].getName().equals(r[j].getName())) {
+//                throw new Exception(l[i].toString());
+//            }
+//            if (
+//                    l[i].getSex() == Person.Sex.MAN && r[j].getSex() == Person.Sex.WOMAN ||
+//                            l[i].getSex().equals(r[j].getSex()) && l[i].getAge() > r[j].getAge() ||
+//                            l[i].getSex().equals(r[j].getSex()) && l[i].getAge() == r[j].getAge() && l[i].getName().compareTo(r[j].getName()) < 0
+//            ) {
+//                a[k++] = l[i++];
+//            } else {
+//                a[k++] = r[j++];
+//            }
         }
         while (i < left) {
             a[k++] = l[i++];

@@ -17,7 +17,7 @@ public class Main {
         BubbleSort bs = new BubbleSort(personArr);
         long startTime = System.currentTimeMillis();
         try {
-            Person[] arrBs = bs.compareTo();
+            Person[] arrBs = bs.sort();
         } catch (Exception e) {
             System.out.println("При сортировке массива найден объект с идентичными значениями полей age и name: " + e.getMessage());
         }
@@ -29,7 +29,7 @@ public class Main {
             long elapsedTimeMs;
             startTime = System.currentTimeMillis();
             try {
-                arrMs = ms.compareTo();
+                arrMs = ms.sort();
             } catch (Exception e) {
                 System.out.println("При сортировке массива найден объект с идентичными значениями полей age и name: " + e.getMessage());
                 throw new Exception("Массив не будет отсортирован из-за этого", e);
@@ -57,7 +57,8 @@ public class Main {
         Person[] result = new Person[count];
         for (int i = 0; i < result.length; i++) {
             result[i] = new Person(
-                    (int) (100.0 * Math.random()),
+                    (int)Math.floor(100*Math.random()),
+//                    (int) (100.0 * Math.random()),
                     randomEnum(Person.Sex.class),
                     randomName());
         }
@@ -84,8 +85,7 @@ public class Main {
      * Cлучайный выбор значения из перечисления
      *
      * @param clazz - класс перечисления
-     * @param clazz
-     * @return
+     * @return - случайный выбор из перечисления
      */
     public static Person.Sex randomEnum(Class<Person.Sex> clazz) {
         int x = new Random().nextInt(clazz.getEnumConstants().length);

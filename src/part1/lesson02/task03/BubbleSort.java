@@ -22,19 +22,22 @@ public class BubbleSort {
      * @return - отсортированный массив
      * @throws Exception - ошибка при обнаружении двух Person с одинаковым возрастом и именами
      */
-    public Person[] compareTo() throws Exception {
+    public Person[] sort() throws Exception {
         for (int i = 0; i < arr.length; i++) {
             for (int j = 1; j < (arr.length - i); j++) {
-                if (arr[j].getAge() == arr[j - 1].getAge() && arr[j].getName().equals(arr[j - 1].getName())) {
-                    throw new Exception(arr[j].toString());
-                }
-                if ((arr[j].getSex() == Person.Sex.MAN && arr[j - 1].getSex() == Person.Sex.WOMAN)
-                        || (arr[j].getSex().equals(arr[j - 1].getSex()) && arr[j].getAge() > arr[j - 1].getAge())
-                        || (arr[j].getSex().equals(arr[j - 1].getSex()) && arr[j].getAge() == arr[j - 1].getAge()
-                                && arr[j].getName().compareTo(arr[j - 1].getName()) < 0)
-                ) {
+                if(arr[j].compareTo(arr[j-1])==1){
                     swap(arr, j, j - 1);
                 }
+//                if (arr[j].getAge() == arr[j - 1].getAge() && arr[j].getName().equals(arr[j - 1].getName())) {
+//                    throw new Exception(arr[j].toString());
+//                }
+//                if ((arr[j].getSex() == Person.Sex.MAN && arr[j - 1].getSex() == Person.Sex.WOMAN)
+//                        || (arr[j].getSex().equals(arr[j - 1].getSex()) && arr[j].getAge() > arr[j - 1].getAge())
+//                        || (arr[j].getSex().equals(arr[j - 1].getSex()) && arr[j].getAge() == arr[j - 1].getAge()
+//                                && arr[j].getName().compareTo(arr[j - 1].getName()) < 0)
+//                ) {
+//                    swap(arr, j, j - 1);
+//                }
             }
         }
         return this.arr;
