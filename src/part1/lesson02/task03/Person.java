@@ -11,7 +11,7 @@ import java.util.Objects;
  * sex (пол – объект класса Sex со строковыми константами внутри MAN, WOMAN),
  * name (имя - строка)
  */
-public class Person {
+public class Person implements Comparable<Person>{
 
     /**
      * Возраст, целое число 0-100
@@ -73,6 +73,25 @@ public class Person {
                 ", sex=" + sex +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Person person) {
+        if (this.getAge() == person.getAge() && this.getName().equals(person.getName())) {
+            try {
+                throw new Exception(this.toString());
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+        if ((this.getSex() == Person.Sex.MAN && person.getSex() == Person.Sex.WOMAN)
+                || (this.getSex().equals(person.getSex()) && this.getAge() > person.getAge())
+                || (this.getSex().equals(person.getSex()) && this.getAge() == person.getAge()
+                && this.getName().compareTo(person.getName()) < 0)
+        ) {
+            return 1;
+        }
+        return -1;
     }
 
     static enum Sex {MAN, WOMAN}
