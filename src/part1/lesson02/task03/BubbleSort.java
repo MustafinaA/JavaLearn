@@ -28,16 +28,6 @@ public class BubbleSort {
                 if(arr[j].compareTo(arr[j-1])==1){
                     swap(arr, j, j - 1);
                 }
-//                if (arr[j].getAge() == arr[j - 1].getAge() && arr[j].getName().equals(arr[j - 1].getName())) {
-//                    throw new Exception(arr[j].toString());
-//                }
-//                if ((arr[j].getSex() == Person.Sex.MAN && arr[j - 1].getSex() == Person.Sex.WOMAN)
-//                        || (arr[j].getSex().equals(arr[j - 1].getSex()) && arr[j].getAge() > arr[j - 1].getAge())
-//                        || (arr[j].getSex().equals(arr[j - 1].getSex()) && arr[j].getAge() == arr[j - 1].getAge()
-//                                && arr[j].getName().compareTo(arr[j - 1].getName()) < 0)
-//                ) {
-//                    swap(arr, j, j - 1);
-//                }
             }
         }
         return this.arr;

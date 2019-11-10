@@ -69,18 +69,6 @@ public class MergeSort {
             } else {
                 a[k++] = r[j++];
             }
-//            if (l[i].getAge() == r[j].getAge() && l[i].getName().equals(r[j].getName())) {
-//                throw new Exception(l[i].toString());
-//            }
-//            if (
-//                    l[i].getSex() == Person.Sex.MAN && r[j].getSex() == Person.Sex.WOMAN ||
-//                            l[i].getSex().equals(r[j].getSex()) && l[i].getAge() > r[j].getAge() ||
-//                            l[i].getSex().equals(r[j].getSex()) && l[i].getAge() == r[j].getAge() && l[i].getName().compareTo(r[j].getName()) < 0
-//            ) {
-//                a[k++] = l[i++];
-//            } else {
-//                a[k++] = r[j++];
-//            }
         }
         while (i < left) {
             a[k++] = l[i++];
