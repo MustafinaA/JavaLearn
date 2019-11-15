@@ -1,7 +1,7 @@
 package part1.lesson03.task01;
 
+import java.lang.reflect.Array;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 
@@ -47,9 +47,8 @@ class MathBox {
      */
     Number summator() {
         double sum = 0;
-        Iterator<Number> i = nums.iterator();
-        while (i.hasNext()) {
-            sum += i.next().doubleValue();
+        for (Number n : nums) {
+            sum += n.doubleValue();
         }
         return sum;
     }
@@ -60,22 +59,20 @@ class MathBox {
      */
     void splitter(double divider) {
         Set<Number> result = new HashSet<>();// чтобы не потерять элемент создаю новый Set
-        Iterator<Number> i = nums.iterator();
         try {
-            while (i.hasNext()) {
-                Number t = i.next();
-                Double d = t.doubleValue() / divider;
+            for (Number num : nums) {
+                double d = num.doubleValue() / divider;
                 if (d == Double.POSITIVE_INFINITY || d == Double.NEGATIVE_INFINITY) {
                     throw new ArithmeticException();
                 }
                 if (Math.abs(divider) == 1.0 &&
-                        (t.getClass().getName().equals("java.lang.Byte") ||
-                                t.getClass().getName().equals("java.lang.Short") ||
-                                t.getClass().getName().equals("java.lang.Integer") ||
-                                t.getClass().getName().equals("java.lang.Long")
+                        (num.getClass().getName().equals("java.lang.Byte") ||
+                                num.getClass().getName().equals("java.lang.Short") ||
+                                num.getClass().getName().equals("java.lang.Integer") ||
+                                num.getClass().getName().equals("java.lang.Long")
                         )
                 ) {
-                    result.add(d.intValue());
+                    result.add((int) d);
                 } else {
                     result.add(d);
                 }
@@ -90,18 +87,15 @@ class MathBox {
     public String toString() {
         String result = "{";
         int elemCount = 0;
-        Iterator<Number> i = nums.iterator();
-        while (i.hasNext()) {
-            Number nxt = i.next();
-            result += ((elemCount++ > 0) ? ", " : "").concat(nxt.toString());
+        for (Number num : nums) {
+            result += ((elemCount++ > 0) ? ", " : "").concat(num.toString());
         }
         return result + "}";
     }
 
-    /*? hashcode  в некоторых примерах возвращается кодПоля*31 или *29 - что это означает, какой множитель использовать*/
     @Override
     public int hashCode() {
-        return (nums == null) ? 0 : nums.hashCode();
+        return (nums == null) ? 0 : 31 * nums.hashCode();
     }
 
     @Override
@@ -118,11 +112,9 @@ class MathBox {
      * @param forRemove - искомое и удаляемое значение
      */
     public void delElem(Integer forRemove) {
-        Iterator<Number> i = nums.iterator();
-        while (i.hasNext()) {
-            Number item = i.next();
-            if (item.equals(forRemove)) {
-                nums.remove(item);
+        for (Number num : nums) {
+            if (num.equals(forRemove)) {
+                nums.remove(num);
                 break;
             }
         }
