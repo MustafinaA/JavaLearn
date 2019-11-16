@@ -1,6 +1,11 @@
 package part1.lesson05.task01;
 import java.util.Random;
 
+/**
+ *  Вспомогательный класс для генерации случайных значений
+ *  @author Алина Мустафина
+ *  @version 1.0
+ */
 public class RandomGenerateItem {
     /**
      * алфавит для имен
