@@ -23,15 +23,15 @@ public class PetsCatalog {
      */
     private Set<Pet> pets;
 
-    PetsCatalog(Set<Pet> pets) {
+    private PetsCatalog(Set<Pet> pets) {
         this.pets = pets;
     }
 
-    public Set<Pet> getPets() {
+    private Set<Pet> getPets() {
         return pets;
     }
 
-    public void addPet(Pet pet) throws Exception {
+    private void addPet(Pet pet) throws Exception {
         if (!pets.contains(pet)) {
             pets.add(pet);
         } else {
@@ -46,7 +46,7 @@ public class PetsCatalog {
      * @param name - кличка
      * @return - список найденных животных
      */
-    public Set<Pet> searchPets(String name) {
+    private Set<Pet> searchPets(String name) {
         Set<Pet> result = new HashSet<>();
         for (Pet p : pets) {
             if (name.equals(p.getName())) {
@@ -62,7 +62,7 @@ public class PetsCatalog {
      * @param id - идентификационный номер редактируемого животного
      * @return - результат редактирования
      */
-    public boolean editPet(long id, String name, Person person, double weight) {
+    private boolean editPet(long id, String name, Person person, double weight) {
         Pet editItem = null;
         for (Pet p : pets) {
             if (id == p.getId()) {
@@ -85,7 +85,7 @@ public class PetsCatalog {
      * @param N - необходимое количество домашних животных
      * @return - коллекция рандомных домашних животных
      */
-    public static Set<Pet> anyPetsSet(int N) {
+    private static Set<Pet> anyPetsSet(int N) {
         Set<Pet> result = new HashSet<>();
         for (int i = 0; i < N; i++) {
             result.add(new Pet(i, RandomGenerateItem.randomName(), new Person(), RandomGenerateItem.randomWeight(0.5, 50, 2)));
@@ -115,9 +115,7 @@ public class PetsCatalog {
         }
 
         TreeSet<Pet> treePet = new TreeSet<>();
-        for (Pet p : pC.getPets()) {
-            treePet.add(p);
-        }
+        treePet.addAll(pC.getPets());
         System.out.println("Список животных в отсортированном порядке:");
         for (Pet p : treePet) {
             System.out.println(p.toString());

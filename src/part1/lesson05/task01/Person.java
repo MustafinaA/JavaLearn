@@ -33,27 +33,27 @@ public class Person implements Comparable<Person>{
      * @param sex - пол
      * @param name - имя
      */
-    public Person(int age, Sex sex, String name) {
+    Person(int age, Sex sex, String name) {
         this.age = age;
         this.sex = sex;
         this.name = name;
     }
 
-    public Person(){
+    Person(){
         this.age = (int)Math.floor(100*Math.random());
-        this.sex = randomEnum(Person.Sex.class);
+        this.sex = randomEnum();
         this.name = RandomGenerateItem.randomName();
     }
 
-    public int getAge() {
+    private int getAge() {
         return age;
     }
 
-    public Sex getSex() {
+    private Sex getSex() {
         return sex;
     }
 
-    public String getName() {
+    private String getName() {
         return name;
     }
 
@@ -85,9 +85,9 @@ public class Person implements Comparable<Person>{
     @Override
     public int compareTo(Person person) {
         if ((this.getSex() == Person.Sex.MAN && person.getSex() == Person.Sex.WOMAN)
-                || (this.getSex().equals(person.getSex()) && this.getAge() > person.getAge())
-                || (this.getSex().equals(person.getSex()) && this.getAge() == person.getAge()
-                && this.getName().compareTo(person.getName()) < 0)
+                || (sex.equals(person.getSex()) && age > person.getAge())
+                || (sex.equals(person.getSex()) && age == person.getAge()
+                && name.compareTo(person.getName()) < 0)
         ) {
             return 1;
         }
@@ -97,13 +97,12 @@ public class Person implements Comparable<Person>{
     /**
      * Cлучайный выбор значения из перечисления
      *
-     * @param clazz - класс перечисления
      * @return - случайный выбор из перечисления
      */
-    public static Sex randomEnum(Class<Sex> clazz) {
-        int x = new Random().nextInt(clazz.getEnumConstants().length);
-        return clazz.getEnumConstants()[x];
+    private static Sex randomEnum() {
+        int x = new Random().nextInt(Sex.class.getEnumConstants().length);
+        return Sex.class.getEnumConstants()[x];
     }
 
-    static enum Sex {MAN, WOMAN}
+    enum Sex {MAN, WOMAN}
 }

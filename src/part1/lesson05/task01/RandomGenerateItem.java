@@ -6,18 +6,18 @@ import java.util.Random;
  *  @author Алина Мустафина
  *  @version 1.0
  */
-public class RandomGenerateItem {
+class RandomGenerateItem {
     /**
      * алфавит для имен
      */
-    final static String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private final static String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     /**
      * Генерирует случайное "имя" - набор до 10 букв алфавита
      *
      * @return - имя
      */
-    public static String randomName() {
+    static String randomName() {
         StringBuilder builder = new StringBuilder();
         while (builder.toString().length() == 0) {
             int length = new Random().nextInt(1) + 1;
@@ -35,7 +35,7 @@ public class RandomGenerateItem {
      * @param r - количество знаков (степень округления)
      * @return - вес до r знаков
      */
-    public static double randomWeight(double min, double max, double r){
+    static double randomWeight(double min, double max, double r){
         double roundPower = Math.pow(10.0, r);
         return Math.round(((max-min)*Math.random()+min)*roundPower)/roundPower;
     }
