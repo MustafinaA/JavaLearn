@@ -76,8 +76,8 @@ public class Person implements Comparable<Person>{
     @Override
     public String toString() {
         return "Person{" +
-                "sex=" + sex +
-                ", age=" + age +
+                "sex=" + sex + ((sex==Sex.MAN)?"  ":"") +
+                ", age=" + age + ((age < 10)?"  ":((age != 100)?" ":"")) +
                 ", name='" + name + '\'' +
                 '}';
     }

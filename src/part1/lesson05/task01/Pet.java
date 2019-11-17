@@ -1,5 +1,6 @@
 package part1.lesson05.task01;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Objects;
  * @author Алина Мустафина
  * @version 1.0
  */
-public class Pet implements Comparable<Pet> {
+public class Pet{
     /**
      * идентификатор домашнего животного
      */
@@ -69,18 +70,6 @@ public class Pet implements Comparable<Pet> {
         return id;
     }
 
-    void setName(String name) {
-        this.name = name;
-    }
-
-    void setPerson(Person person) {
-        this.person = person;
-    }
-
-    void setWeight(double weight) {
-        this.weight = weight;
-    }
-
     private double getWeight() {
         return weight;
     }
@@ -88,15 +77,48 @@ public class Pet implements Comparable<Pet> {
         return person;
     }
 
-    @Override
-    public int compareTo(Pet pet) {
-        if ((!this.getPerson().equals(pet.getPerson()) && this.getPerson().compareTo(pet.getPerson())< 0)
-                || (this.getPerson().equals(pet.getPerson()) && this.getName().compareTo(pet.getName()) > 0)
-                || (this.getPerson().equals(pet.getPerson()) && this.getName().equals(pet.getName()) && this.getWeight() > pet.getWeight())) {
-            return 1;
+    /**
+     * Перечисление компораторов домашних животных
+     */
+    public enum PetComparator implements Comparator<Pet> {
+        PERSON_SORT {
+            public int compare(Pet o1, Pet o2) {
+                return o1.getPerson().compareTo(o2.getPerson());
+            }},
+        NAME_SORT {
+            public int compare(Pet o1, Pet o2) {
+                return o1.getName().compareTo(o2.getName());
+            }},
+        WEIGHT_SORT {
+            public int compare(Pet o1, Pet o2) {
+                return Double.compare(o1.getWeight(), o2.getWeight());
+            }};
+
+        /**
+         * метод упорядочивания
+         * @param other - компоратор
+         * @param orderAsc - askending|descending по возрастанию или по убыванию
+         * @return - компоратор
+         */
+        public static Comparator<Pet> sorting(final Comparator<Pet> other, boolean orderAsc) {
+            return (o1, o2) -> (orderAsc?1:-1) * other.compare(o1, o2);
         }
-        return -1;
+
+        /**
+         * Возращает компоратор по входным enum-элементам
+         * @param multipleOptions - компораторы домашних животных переменного количества
+         * @return - мультикомпоратор
+         */
+        public static Comparator<Pet> getComparator(final PetComparator... multipleOptions) {
+            return (o1, o2) -> {
+                for (PetComparator option : multipleOptions) {
+                    int result = option.compare(o1, o2);
+                    if (result != 0) {
+                        return result;
+                    }
+                }
+                return 0;
+            };
+        }
     }
-
-
 }
