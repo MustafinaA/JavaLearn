@@ -2,6 +2,7 @@ package part1.lesson06.task01;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -12,48 +13,37 @@ import java.util.TreeSet;
  * @version 1.0
  */
 public class FileReadWriteDemo {
-    private final static String someText = "Задание 1. Написать программу, читающую текстовый файл.\n" +
-            "Программа должна составлять отсортированный по алфавиту список слов, найденных в файле и сохранять его в файл-результат.\n" +
+    private final static String someText = "Задание 1. Написать программу, 'читающую' текстовый файл.\n" +
+            "Программа должна составлять отсортированный по алфавиту: список слов, найденных в файле и сохранять его в файл-результат.\n" +
             " Найденные слова не должны повторяться, регистр не должен учитываться. Одно слово в разных падежах – это разные слова.";
-
-    /**
-     * Строка символов разделителей
-     */
-    private final static String splitChars = ".,;-–!?";
-
     private final static String fileIn = "noteIn.txt";
     private final static String fileOut = "noteOut.txt";
 
     public static void main(String[] args){
-        writeFile(fileIn, null);
-        addToFile();
-        writeFile(fileOut, null);
-        TreeSet<String> wordsSet = readFile();
+        writeFile(fileIn, someText);
+        Set<String> wordsSet = readFile();
         writeFile(fileOut, wordsSet);
     }
 
     /**
      * Чтение файла
-     * ??? В finally блок вывел предупреждение на return
      */
-    private static TreeSet<String> readFile() {
-        TreeSet<String> result = new TreeSet<>();
+    private static Set<String> readFile() {
+        Set<String> result = new TreeSet<>();
         try (FileInputStream fis = new FileInputStream(FileReadWriteDemo.fileIn);
-             Reader in = new InputStreamReader(fis, StandardCharsets.UTF_8)) {
-            int i;
-            StringBuilder word = new StringBuilder();
-            while ((i = in.read()) != -1) {
-                char c = Character.toUpperCase((char) i);
-                if (!Character.isWhitespace(c) && splitChars.indexOf(c) == -1) {
-                    word.append(c);
-                } else if (word.length() > 0) {
-                    result.add(word.toString());
-                    word = new StringBuilder();
+             BufferedReader br = new BufferedReader(new InputStreamReader(fis, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                for (String word : line.split("[\\p{P}\\s-]+")){
+                    if(word.length()>0 && !result.contains(word.toLowerCase())) {
+                        result.add(word.toLowerCase());
+                    }
                 }
             }
-            return result;
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        }catch (FileNotFoundException e){
+            System.out.println("Файл не найден");
+        }catch (IOException e){
+            System.out.println("Файл нельзя прочитать");
         }
         return result;
     }
@@ -64,7 +54,7 @@ public class FileReadWriteDemo {
      * @param fileName - имя/путь файла
      * @param content  - что выводим
      */
-    private static void writeFile(String fileName, TreeSet<String> content) {
+    private static void writeFile(String fileName, Set<String> content) {
         try (FileOutputStream fos = new FileOutputStream(fileName, true);
              Writer out = new OutputStreamWriter(fos, StandardCharsets.UTF_8)
         ) {
@@ -78,10 +68,15 @@ public class FileReadWriteDemo {
         }
     }
 
-    private static void addToFile() {
-        try (FileOutputStream fos = new FileOutputStream(FileReadWriteDemo.fileIn, true);
+    /**
+     * Запись текста в файл
+     * @param fileName - имя файла
+     * @param content - выводимое строковое содержимое
+     */
+    private static void writeFile(String fileName, String content) {
+        try (FileOutputStream fos = new FileOutputStream(fileName, true);
              Writer out = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
-            out.write(FileReadWriteDemo.someText);
+            out.write(content);
         } catch (IOException e) {
             e.printStackTrace();
         }
