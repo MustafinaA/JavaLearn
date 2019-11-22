@@ -103,7 +103,6 @@ public class Pet{
         public static Comparator<Pet> sorting(final Comparator<Pet> other, boolean orderAsc) {
             return (o1, o2) -> (orderAsc?1:-1) * other.compare(o1, o2);
         }
-
         /**
          * Возращает компоратор по входным enum-элементам
          * @param multipleOptions - компораторы домашних животных переменного количества

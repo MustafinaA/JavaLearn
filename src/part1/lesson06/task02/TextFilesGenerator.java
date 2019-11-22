@@ -15,11 +15,12 @@ package part1.lesson06.task02;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -28,6 +29,11 @@ import java.util.Random;
  */
 public class TextFilesGenerator {
     private static Random random = new Random();
+    /**
+     * алфавит
+     */
+    private final static String lexicon = "abcdefghijklmnopqrdtuvwxyz";
+
     /**
      * Символы, на которые по заданному правилу может завершиться предложение
      */
@@ -63,19 +69,19 @@ public class TextFilesGenerator {
     private static void getFiles(String path, int n, int size, String[] words, int probability) {
         for (int i = 0; i < n; i++) {
             StringBuilder builder = new StringBuilder();
+            int tempSize = 0;
             do {
-                StringBuffer abzac = getRandomAbzac(words, probability);
+                StringBuilder abzac = getRandomAbzac(words, probability);
+                if (tempSize + abzac.toString().getBytes(StandardCharsets.UTF_8).length > size) {
+                    break;
+                }
                 builder.append(abzac);
-                builder.append("\n");
-            } while (builder.toString().getBytes(StandardCharsets.UTF_8).length < size);
-
-            byte[] toWrite = Arrays.copyOfRange(builder.toString().getBytes(StandardCharsets.UTF_8), 0, size);
-            char lastCharOnText = (char) toWrite[toWrite.length - 1]; // проверяется последний символ в тексте, надо завершить символом из sentenceFinalChars
-            if (lastCharOnText != '\n' && !Arrays.asList(sentenceFinalChars).contains(lastCharOnText)) {
-                toWrite[toWrite.length - 1] = (byte) sentenceFinalChars[getIntRandom(0, sentenceFinalChars.length - 1)];
-            }
-            try (FileOutputStream fos = new FileOutputStream(path + "/gen-text-file-" + i + ".txt")) {
-                fos.write(toWrite);
+                tempSize = builder.toString().getBytes(StandardCharsets.UTF_8).length;
+            } while (tempSize < size);
+            try (FileOutputStream fos = new FileOutputStream(path + "/gen-text-file-" + i + ".txt");
+                 Writer out = new OutputStreamWriter(fos, StandardCharsets.UTF_8)
+            ) {
+                out.write(builder.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -91,16 +97,11 @@ public class TextFilesGenerator {
     private static String[] getStringArrayRandom(int size) {
         String[] result = new String[size];
         for (int i = 0; i < size; i++) {
-            StringBuffer sb = getRandomWord(result, 0);
+            StringBuilder sb = getRandomWord(result, 0);
             result[i] = sb.toString();
         }
         return result;
     }
-
-    /**
-     * алфавит
-     */
-    private final static String lexicon = "abcdefghijklmnopqrdtuvwxyz";
 
     /**
      * Генерирует случайное слово - набор до 15 букв алфавита или возвращает слово из словаря
@@ -109,8 +110,8 @@ public class TextFilesGenerator {
      * @param probability - вероятность вхождения одного из слов словаря в предложение
      * @return - слово
      */
-    private static StringBuffer getRandomWord(String[] words, int probability) {
-        StringBuffer result = new StringBuffer();
+    private static StringBuilder getRandomWord(String[] words, int probability) {
+        StringBuilder result = new StringBuilder();
         if (getIntRandom(0, 100) < probability) {
             result.append(words[getIntRandom(0, words.length)]);
             return result;
@@ -131,13 +132,14 @@ public class TextFilesGenerator {
      * @param probability - вероятность вхождения одного из слов словаря в предложение
      * @return - абзац текста
      */
-    private static StringBuffer getRandomAbzac(String[] words, int probability) {
-        StringBuffer result = new StringBuffer();
+    private static StringBuilder getRandomAbzac(String[] words, int probability) {
+        StringBuilder result = new StringBuilder();
         int sentenceCount = getIntRandom(1, 20);
         for (int i = 0; i < sentenceCount; i++) {
-            StringBuffer sentence = getRandomSentence(words, probability);
+            StringBuilder sentence = getRandomSentence(words, probability);
             result.append(sentence);
         }
+        result.append("\n");
         return result;
     }
 
@@ -148,11 +150,11 @@ public class TextFilesGenerator {
      * @param probability - вероятность вхождения одного из слов словаря в предложение
      * @return - предложение
      */
-    private static StringBuffer getRandomSentence(String[] words, int probability) {
-        StringBuffer result = new StringBuffer();
+    private static StringBuilder getRandomSentence(String[] words, int probability) {
+        StringBuilder result = new StringBuilder();
         int wordCount = getIntRandom(1, 15);
         for (int i = 0; i < wordCount; i++) {
-            StringBuffer word = getRandomWord(words, probability);
+            StringBuilder word = getRandomWord(words, probability);
             if (i == 0) {
                 String firstWordInSentence = word.toString();
                 firstWordInSentence = firstWordInSentence.substring(0, 1).toUpperCase() + firstWordInSentence.substring(1);
@@ -164,7 +166,7 @@ public class TextFilesGenerator {
                 result.append(random.nextDouble() > 0.7 ? ", " : " ");
             }
         }
-        result.append(sentenceFinalChars[getIntRandom(0, (sentenceFinalChars.length) - 1)] + " ");
+        result.append(sentenceFinalChars[getIntRandom(0, (sentenceFinalChars.length) - 1)]).append(" ");
         return result;
     }
 

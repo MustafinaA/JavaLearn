@@ -81,7 +81,6 @@ public class Person implements Comparable<Person>{
                 ", name='" + name + '\'' +
                 '}';
     }
-
     @Override
     public int compareTo(Person person) {
         if ((this.getSex() == Person.Sex.MAN && person.getSex() == Person.Sex.WOMAN)
