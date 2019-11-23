@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.Random;
 
 /**
+ * Генератор текста
  * @author Алина Мустафина
  * @version 1.0
  */
