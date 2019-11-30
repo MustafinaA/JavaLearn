@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static java.lang.String.format;
+
 /*
 Дан массив случайных чисел. Написать программу для вычисления факториалов всех элементов массива.
 Использовать пул потоков для решения задачи.
@@ -31,7 +33,7 @@ public class FactorialOnPool {
     /**
      * Максимум для генерируемых чисел
      */
-    private static final int NUMBER_MAX = 10000;
+    private static final int NUMBER_MAX = 1000;
     /**
      * Список случайных чисел для вычисления факториалов
      */
@@ -43,10 +45,11 @@ public class FactorialOnPool {
     private static NavigableMap<Integer, BigInteger> computedFactorials = new TreeMap<>();
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        ExecutorService threadPool = Executors.newFixedThreadPool(5);
         for (int i = 0; i < NUMBER_COUNT; i++) {
             arrRandomNums.add(new Random().nextInt(NUMBER_MAX));
         }
-        //FutureTask базируется на конкретной реализации Future интерфейса и обеспечивает асинхронную обработку
+        long start = System.nanoTime();
         List<FutureTask<BigInteger>> getFactorialTasks = new ArrayList<>();
         int taskInd = 0;// порядковый номер task
         for (Integer tempNum : arrRandomNums) {
@@ -61,15 +64,12 @@ public class FactorialOnPool {
                     callable = new Factorial(tempNum, previItemOnTree.getKey(), previItemOnTree.getValue());
                 }
                 getFactorialTasks.add(new FutureTask(callable));
-                Thread t = new Thread(getFactorialTasks.get(taskInd));
-                t.start();
-                // get блокируется до получения результата
-                // get может вызывать проверяемые исключения, например, когда он прерывается +InterruptedException
+                threadPool.execute(getFactorialTasks.get(taskInd));
                 computedFactorials.put(tempNum, getFactorialTasks.get(taskInd++).get());
             }
         }
+        threadPool.shutdown();
         arrRandomNums.forEach(x->System.out.println(x+"->"+ computedFactorials.get(x)));
-
+        System.out.println(System.nanoTime() - start);
     }
-
 }
