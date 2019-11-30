@@ -29,30 +29,6 @@ public class Person implements Serializable {
         this.letter = letter;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public double getMoney() {
-        return money;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public void setMoney(double money) {
-        this.money = money;
-    }
-
     @Override
     public String toString() {
         return "Person{" +

@@ -26,13 +26,13 @@ public class SerializationDemo {
     /**
      * Установленная в настройках системы строка разрыва строк
      */
-    final static String SP = System.getProperty("line.separator");
+    private final static String SP = System.getProperty("line.separator");
 
-    public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException, NoSuchFieldException, ClassNotFoundException {
+    public static void main(String[] args) throws IllegalAccessException {
         Person person = new Person("Иван", 1999, 987.78, 'И');
         System.out.println("Object before serialization  => " + person.toString());
         serialize(person, "primitiveObj.bin");
-        System.out.println("Object after deserialization  => " + deSerialize("primitiveObj.bin", Person.class).toString());
+        System.out.println("Object after deserialization  => " + deSerialize("primitiveObj.bin").toString());
     }
 
     /**
@@ -67,13 +67,13 @@ public class SerializationDemo {
      * @param file - имя файла, для чтения десериализуемого объекта
      * @return - объект после десериализации
      */
-    private static <T extends Class> Object deSerialize(String file, T clazz) {
+    private static <T extends Class> Object deSerialize(String file) {
         Class<?> c = null;
         Object obj = null;
         Field tempField = null;
         Class<?> tempType = null;
         String typeName = null;
-        Scanner input = null;
+        Scanner input;
         try {
             input = new Scanner(new File(file));
 
