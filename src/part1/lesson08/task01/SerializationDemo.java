@@ -43,7 +43,7 @@ public class SerializationDemo {
      */
     private static void serialize(Object object, String file) throws IllegalAccessException {
         Class aClass = object.getClass();
-        Field[] fields = aClass.getDeclaredFields();// поля примитивы, поэтому можно воспользоваться таким методом получения полей
+        Field[] fields = aClass.getDeclaredFields();
         File f = new File(file);
         try (FileWriter writer = new FileWriter(f, StandardCharsets.UTF_8)) {
             writer.write(aClass.getName() + SP);// запишу информацию о классе
@@ -67,7 +67,7 @@ public class SerializationDemo {
      * @param file - имя файла, для чтения десериализуемого объекта
      * @return - объект после десериализации
      */
-    private static <T extends Class> Object deSerialize(String file) {
+    private static Object deSerialize(String file) {
         Class<?> c = null;
         Object obj = null;
         Field tempField = null;
