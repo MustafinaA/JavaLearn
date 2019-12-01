@@ -6,9 +6,6 @@ package part1.lesson11.task01;
 Если квадрат целой части q числа равен k, то вывести это число на экран.
 Предусмотреть что первоначальные числа могут быть отрицательные, в этом случае генерировать исключение.
  */
-
-import javafx.util.Pair;
-
 import java.util.Arrays;
 import java.util.Random;
 
@@ -30,20 +27,20 @@ public class Arithmetica {
                 .longs(N, -10, 1000)
                 .toArray())
                 .mapToObj(Arithmetica::calcSqrt)
-                .filter(q -> !Double.isNaN(q.getValue()) && someFuncInterface.condition(q.getValue().longValue(), q.getKey()))
+                .filter(q -> !Double.isNaN(q.getSqrt()) && someFuncInterface.condition(q.getSqrt().longValue(), q.getNum()))
                 .forEach(System.out::println);
     }
 
-    private static Pair<Long, Double> calcSqrt(long k) {
+    private static NumberSqrtNumber<Long, Double> calcSqrt(long k) {
         try {
             if (k > 0) {
-                return new Pair<>(k, Math.sqrt(k));
+                return new NumberSqrtNumber<>(k, Math.sqrt(k));
             }
             throw new Exception();
         } catch (Exception e) {
             System.out.println(k + " Квадратный корень от отрицательного числа равен NaN");
         }
-        return new Pair<>(k, Double.NaN);
+        return new NumberSqrtNumber<>(k, Double.NaN);
     }
 
     @FunctionalInterface
