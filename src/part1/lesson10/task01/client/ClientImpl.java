@@ -10,16 +10,13 @@ import java.util.Date;
  * Клиентская логика
  * создание сокета, чтение и запись сообщения. отправка сообщения
  */
-public class ClientImpl {
+class ClientImpl {
     private BufferedReader in; // поток чтения из сокета
     private BufferedWriter out; // поток чтения в сокет
     private BufferedReader inputUser; // поток чтения с консоли
     private String nickname;// ник клиента
-    private Date time;
-    private String dtime;
-    private SimpleDateFormat dt1;
 
-    public ClientImpl(String name, int port, String host) {
+    ClientImpl(String name, int port, String host) {
         try {
             this.nickname = name;
             Socket socket = new Socket(host, port);// новый запрос на соединение
@@ -44,7 +41,7 @@ public class ClientImpl {
      *
      * @param message - текст сообщения
      */
-    public void sendMessage(String message) {
+    private void sendMessage(String message) {
         try {
             out.write(message);
             out.newLine();
@@ -80,9 +77,9 @@ public class ClientImpl {
             while (true) {
                 String message;
                 try {
-                    time = new Date(); // текущая дата
-                    dt1 = new SimpleDateFormat("HH:mm:ss"); // берем только время до секунд
-                    dtime = dt1.format(time); // время
+                    Date time = new Date(); // текущая дата
+                    SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm:ss"); // берем только время до секунд
+                    String dtime = dt1.format(time); // время
                     message = inputUser.readLine(); // сообщения с консоли
                     out.write("(" + dtime + ") " + nickname + ": " + message + "\n"); // отправляем на сервер
                     out.flush(); // чистим

@@ -1,7 +1,5 @@
 package part1.lesson10.task01.server;
 
-import part1.lesson10.task01.server.Connection;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,12 +14,12 @@ public class ClientData {
     private Map<String, Connection> connections;
     private List<String> names;
 
-    public ClientData() {
+    ClientData() {
         this.connections = new HashMap<>();
         this.names = new ArrayList<>();
     }
 
-    public Map<String, Connection> getConnections() {
+    Map<String, Connection> getConnections() {
         return connections;
     }
 

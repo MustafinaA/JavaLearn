@@ -10,7 +10,7 @@ public class Connection extends Thread {
     private BufferedReader in; // поток чтения из сокета
     private BufferedWriter out; // поток записи в сокет
 
-    public Connection(Socket socket) throws IOException {
+    Connection(Socket socket) throws IOException {
         this.socket = socket;
         // если потоку ввода/вывода приведут к генерированию исключения, оно проброситься дальше
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));

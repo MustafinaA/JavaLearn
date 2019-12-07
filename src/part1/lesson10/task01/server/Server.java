@@ -16,7 +16,7 @@ import static part1.lesson10.task01.MyProperties.SERVER_PORT;
  * @version 1.0
  */
 public class Server {
-    public static ClientData serverList = new ClientData(); // коллекция всех нитей - экземпляров сервера, слушающих каждый своего клиента
+    static ClientData serverList = new ClientData(); // коллекция всех нитей - экземпляров сервера, слушающих каждый своего клиента
     private static ServerSocket server; // серверсокет
 
     public static void main(String[] args) throws IOException {
@@ -30,7 +30,7 @@ public class Server {
                     Connection connection = new Connection(socket); //есть новое подключение, инициируем его
                     serverList.add(connection.getName(), connection); // добавим новое соединение в коллекцию
                 } catch (IOException e) {
-                    System.out.println(e.getStackTrace());
+                    System.out.println(e.getMessage());
                     socket.close();
                 }
             }
