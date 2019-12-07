@@ -49,27 +49,6 @@ public class FactorialOnPool {
         }
         long start = System.nanoTime();
         List<FutureTask<BigInteger>> getFactorialTasks = new ArrayList<>();
-        //
-//        for (int i = 0; i < arrRandomNums.length; i++) {
-//            final int j = i;
-//            futures.add(CompletableFuture.supplyAsync(
-//                    () -> factorial.calculate(array[j]),
-//                    executorService
-//            ));
-//        }
-//        try {
-//            for (Future future: futures) {
-//                future.get();
-//            }
-//        } catch (ExecutionException e) {
-//            System.out.println("Error then execute future");
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            System.out.println("Error then interrupted");
-//            e.printStackTrace();
-//        }
-//        executorService.shutdown();
-        //
         int taskInd = 0;// порядковый номер task
         for (Integer tempNum : arrRandomNums) {
             BigInteger factorial = computedFactorials.get(tempNum);
@@ -85,8 +64,6 @@ public class FactorialOnPool {
                 getFactorialTasks.add(new FutureTask(callable));
                 threadPool.execute(getFactorialTasks.get(taskInd));
                 computedFactorials.put(tempNum, getFactorialTasks.get(taskInd++).get());
-
-
             }
         }
         threadPool.shutdown();
