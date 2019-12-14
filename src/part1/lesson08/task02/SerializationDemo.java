@@ -10,9 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -27,14 +25,63 @@ public class SerializationDemo {
     /**
      * Установленная в настройках системы строка разрыва строк
      */
-    private final static String SP = System.getProperty("line.separator");
+    private final static String SEPARATE = System.getProperty("line.separator");
 
-    public static void main(String[] args) throws IllegalAccessException {
-
-        Person person = new Person("Иван", new Company("Alpha","Russia, Kazan, Mira st. 51"));
+    public static void main(String[] args) throws Exception {
+        List<Integer> list = new ArrayList<>();
+        list.add(0);
+        list.add(1);
+        Person person = new Person(list, "Иван", new Company("Alpha", "Russia, Kazan, Mira st. 51"));
         System.out.println("Object before serialization  => " + person.toString());
-        serialize(person, "primitiveObj.bin");
-        System.out.println("Object after deserialization  => " + deSerialize("primitiveObj.bin").toString());
+        serialize(person, "complexObj.txt");
+//        System.out.println("Object after deserialization  => " + deSerialize("complexObj.txt").toString());
+    }
+
+    private static final List LEAVES = Arrays.asList(
+            Boolean.class, Character.class, Byte.class, Short.class,
+            Integer.class, Long.class, Float.class, Double.class, Void.class,
+            String.class);
+
+    /**
+     * Процедура рекурсивной записи информации о полях и значениях, установленных для текущего объекта
+     *
+     * @param object - объект для парса
+     * @param stage  - уровень вложенности
+     * @throws IllegalAccessException
+     */
+    public static String toStringRecursive(Object object, int stage) throws IllegalAccessException {
+        String ESC_CHR = "%" + stage;
+        if (object == null)
+            return "null";
+
+        if (LEAVES.contains(object.getClass()))
+            return object.toString();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(ESC_CHR).append(object.getClass().getName()).append(ESC_CHR).append(SEPARATE);
+        for (Field f : object.getClass().getDeclaredFields()) {
+            if (Modifier.isStatic(f.getModifiers())) {//статичную кишку пропускаем
+                continue;
+            }
+            f.setAccessible(true);
+            if (f.getType().isArray()) {
+                Object[] obj = (Object[]) f.get(object);
+                try {
+                    for (int j = 0; j < obj.length; j++) {
+                        sb.append(ESC_CHR).append(obj[j].getClass().getName()).append(ESC_CHR).append(SEPARATE);// тип
+                        sb.append(ESC_CHR).append(toStringRecursive(obj[j], stage + 1)).append(ESC_CHR).append(SEPARATE);// значение
+                    }
+                } catch (NullPointerException npe) {
+                    break;
+                }
+
+            } else {
+                sb.append(ESC_CHR).append(f.getName()).append(ESC_CHR).append(SEPARATE);// имя
+                sb.append(ESC_CHR).append(f.getType().getName()).append(ESC_CHR).append(SEPARATE);// тип
+                sb.append(ESC_CHR).append(toStringRecursive(f.get(object), stage + 1)).append(ESC_CHR).append(SEPARATE);// значение
+            }
+        }
+        return sb.toString();
     }
 
     /**
@@ -43,67 +90,16 @@ public class SerializationDemo {
      * @param object - сериализуемый объект
      * @param file   - имя файла, за записи сеарилизуемого объекта
      */
-    private static void serialize(Object object, String file) throws IllegalAccessException {
-        Class aClass = object.getClass();
-        Field[] fields = aClass.getDeclaredFields();
+    private static void serialize(Object object, String file) {
         File f = new File(file);
         try (FileWriter writer = new FileWriter(f, StandardCharsets.UTF_8)) {
-            writer.write(aClass.getName() + SP);// запишу информацию о классе
-            writeFieldsInfo(object, fields, writer);// о полях
-
+            writer.write(toStringRecursive(object, 0));
         } catch (IOException e) {
+            System.out.println("Ошибка при работе с файлом");
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Процедура рекурсивной записи в файл информации о полях и значениях, установленных для текущего объекта
-     * @param object - объект для парса
-     * @param fields - все поля этого объекта
-     * @param writer - FileWriter
-     * @throws IOException
-     * @throws IllegalAccessException
-     */
-    private static void writeFieldsInfo(Object object, Field[] fields, FileWriter writer) throws IOException, IllegalAccessException {
-        for (Field fld : fields) {
-            fld.setAccessible(true); // доступ к приватному полю
-            Class clazz = fld.getType();
-            String typeName = clazz.getTypeName();
-            //для каждого поля записываем в файл его имя тип
-            writer.write(fld.getName() + SP);
-            writer.write(typeName + SP);
-            if(clazz.isPrimitive()) {
-                writer.write(fld.get(object) + SP);// и значение для текущего объекта
-            } else if(clazz.isArray()){// ссылочный тип
-                displayArray(clazz.getComponentType(), fld.get(object));
-            }else{
-//                boolean isPrimitiveOrWrapped = isWrapperType(clazz);
-                Object attachedObj = fld.get(object);// значение текущего объекта надо тоже расписать
-//                object.getClass().getConstructors();
-                writeFieldsInfo(attachedObj, attachedObj.getClass().getDeclaredFields(), writer);
-            }
-        }
-    }
-
-    private static void displayArray(Class arrayType, Object theArray) {
-        int length =  java.lang.reflect.Array.getLength(theArray);
-        if(arrayType.isArray())  { //многомерный?
-            System.out.print("{");
-            for(int j = 0; j < length; j++) {
-                Object arr2 = java.lang.reflect.Array.get(theArray, j);
-                displayArray(arrayType.getComponentType(),arr2);
-                if(j!= length-1)
-                    System.out.print(",");
-            }
-            System.out.print("}");
-        } else {// одномерный массив
-            System.out.print("{");
-            for(int j = 0; j < length; j++) {
-                System.out.print(java.lang.reflect.Array.get(theArray, j).toString());
-                if(j!= length-1)
-                    System.out.print(",");
-            }
-            System.out.print("}");
+        } catch (IllegalAccessException e) {
+            System.out.println("Ошибка сериализации");
+            e.printStackTrace();
         }
     }
 
@@ -116,7 +112,7 @@ public class SerializationDemo {
         Scanner input;
         try {
             input = new Scanner(new File(file));
-            readFieldInfo(c, obj, tempField, tempType, input);
+            readFieldInfo(c, obj, tempField, tempType, input, 0);
         } catch (FileNotFoundException e) {
             System.out.println("Файл не найден : " + file);
             e.printStackTrace();
@@ -132,56 +128,91 @@ public class SerializationDemo {
         } catch (NoSuchFieldException e) {
             System.out.println("Не найдено поле");
             e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
         }
         return obj;
     }
 
-    private static void readFieldInfo(Class<?> clazz, Object obj, Field tempField, Class<?>  tempType, Scanner input) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException {
+    private static void readFieldInfo(Class<?> clazz, Object obj, Field tempField, Class<?> tempType, Scanner input, int stage) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchFieldException {
         Object obj_ = obj;
+        String ESC_CHR = "%" + stage;
         while (input.hasNext()) {
             if (clazz == null) {// следующая строка в файле информация о классе
-                clazz = Class.forName(input.next());
-                obj_ =  instance(clazz);//InstantiationException  на obj_ = clazz.newInstance();
+                String inputNext = input.next();
+                int formIndex = inputNext.indexOf(ESC_CHR) + ESC_CHR.length();
+                int toIndex = inputNext.indexOf(ESC_CHR, ESC_CHR.length() - 1);
+                String strValue = inputNext.substring(formIndex, toIndex);
+                clazz = Class.forName(strValue);
+                obj_ = instance(clazz);//InstantiationException  на obj_ = clazz.newInstance();
             } else {// все остальное относится к филдам
-                if (tempField == null) {
-                    tempField = obj_.getClass().getDeclaredField(input.next());
+                if (tempField == null) {// имя
+                    String inputNext = input.next();
+                    int formIndex = inputNext.indexOf(ESC_CHR) + ESC_CHR.length();
+                    int toIndex = inputNext.indexOf(ESC_CHR, ESC_CHR.length() - 1);
+                    String strValue = inputNext.substring(formIndex, toIndex);
+                    tempField = obj_.getClass().getDeclaredField(strValue);
                     tempField.setAccessible(true);
-                } else if (tempType == null) {
-                    String typeName = input.next();
+                } else if (tempType == null) {// тип
+                    String inputNext = input.next();
+                    int formIndex = inputNext.indexOf(ESC_CHR) + ESC_CHR.length();
+                    int toIndex = inputNext.indexOf(ESC_CHR, ESC_CHR.length() - 1);
+                    String strValue = inputNext.substring(formIndex, toIndex);
+                    String typeName = strValue;
                     if (Class.forName(typeName).isPrimitive()) {
                         tempType = TypeUtilities.getPrimitiveTypeByName(typeName);
                     } else {
                         tempType = Class.forName(typeName);
                     }
-                } else {
+                } else {// значение
+                    System.out.println(tempField.getType());
+                    ParameterizedType stringListType = (ParameterizedType) tempField.getGenericType();
+                    Class<?> stringListClass = (Class<?>) stringListType.getActualTypeArguments()[0];
+                    System.out.println(stringListClass.getName()); // class java.lang.String
+                    if (tempType instanceof Class && ((Class) tempType).isArray()) {
+                        Class componentType = ((Class) tempType).getComponentType();
+                        System.out.println("Array component type=" + componentType.getTypeName());
+                        // printArrayComponentType(componentType, level + 1);
+                    }
+                    Type type = tempField.getGenericType();
+                    if (type.getClass() != Class.class) {
+                        System.out.println("Type class implementing interfaces=" + Arrays.toString(type.getClass().getInterfaces()));
+                        System.out.println("Type name= " + type.getTypeName());
+//                        getParameterizedType(type, level);
+                    }
+                    if (LEAVES.contains(tempField.getType())) {
+                        String inputNext = input.next();
+                        int formIndex = inputNext.indexOf(ESC_CHR) + ESC_CHR.length();
+                        int toIndex = inputNext.indexOf(ESC_CHR, ESC_CHR.length() - 1);
+                        String strValue = inputNext.substring(formIndex, toIndex);
+                        tempField.set(obj, strValue);
+                    }
                     if (tempField.getType().isPrimitive()) {
-                        if (tempField.getType().equals(Character.TYPE)) {// т.к. мы неизвестно какие типы полей есть у этого класса, то перебираем все
-                            tempField.setChar(obj, input.next().charAt(0));
+                        String inputNext = input.next();
+                        int formIndex = inputNext.indexOf(ESC_CHR) + ESC_CHR.length();
+                        int toIndex = inputNext.indexOf(ESC_CHR, ESC_CHR.length() - 1);
+                        String strValue = inputNext.substring(formIndex, toIndex);
+                        if (tempField.getType().equals(Character.TYPE)) {
+                            tempField.setChar(obj, strValue.charAt(0));
                         } else if (tempField.getType().equals(Integer.TYPE)) {
-                            tempField.setInt(obj, Integer.parseInt(input.next()));
+                            tempField.setInt(obj, Integer.parseInt(strValue));
                         } else if (tempField.getType().equals(Double.TYPE)) {
-                            tempField.setDouble(obj, Double.parseDouble(input.next()));
+                            tempField.setDouble(obj, Double.parseDouble(strValue));
                         } else if (tempField.getType().equals(Byte.TYPE)) {
-                            tempField.setByte(obj, Byte.parseByte(input.next()));
+                            tempField.setByte(obj, Byte.parseByte(strValue));
                         } else if (tempField.getType().equals(Short.TYPE)) {
-                            tempField.setShort(obj, Short.parseShort(input.next()));
+                            tempField.setShort(obj, Short.parseShort(strValue));
                         } else if (tempField.getType().equals(Long.TYPE)) {
-                            tempField.setLong(obj, Long.parseLong(input.next()));
+                            tempField.setLong(obj, Long.parseLong(strValue));
                         } else if (tempField.getType().equals(Float.TYPE)) {
-                            tempField.setFloat(obj, Float.parseFloat(input.next()));
+                            tempField.setFloat(obj, Float.parseFloat(strValue));
                         } else if (tempField.getType().equals(Boolean.TYPE)) {
-                            tempField.setBoolean(obj, Boolean.parseBoolean(input.next()));
+                            tempField.setBoolean(obj, Boolean.parseBoolean(strValue));
                         }
                     } else {
-                        Object attachedObj = tempType.newInstance();
-                        Field attachedField = null;
-                        Class<?>  attachedType = null;
-                        readFieldInfo(clazz, attachedObj, attachedField, attachedType, input);
-                        //tempField.set(obj, input.next());
+//                        Object attachedObj = tempType.newInstance();
+//                        Field attachedField = null;
+//                        Class<?> attachedType = null;
+//                        readFieldInfo(clazz, attachedObj, attachedField, attachedType, input, stage+1);
+//                        //tempField.set(obj, input.next());
                     }
                     tempField = null;
                     tempType = null;
@@ -192,6 +223,7 @@ public class SerializationDemo {
 
     /**
      * Универсальный вызов конструктора
+     *
      * @param c
      * @param <T>
      * @return
