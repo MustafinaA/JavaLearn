@@ -86,7 +86,7 @@ public class SerializationDemo {
             while (input.hasNext()) {
                 if (c == null) {// следующая строка в файле информация о классе
                     c = Class.forName(input.next());
-                    obj = c.getDeclaredConstructor().newInstance();//Constructor.c.newInstance();
+                    obj = c.getDeclaredConstructor().newInstance();
                 } else {// все остальное относится к филдам
                     if (tempField == null) {
                         String fieldName = input.next();
