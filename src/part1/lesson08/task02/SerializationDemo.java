@@ -34,7 +34,7 @@ public class SerializationDemo {
         Person person = new Person(list, "Иван", new Company("Alpha", "Russia, Kazan, Mira st. 51"));
         System.out.println("Object before serialization  => " + person.toString());
         serialize(person, "complexObj.txt");
-//        System.out.println("Object after deserialization  => " + deSerialize("complexObj.txt").toString());
+        System.out.println("Object after deserialization  => " + deSerialize("complexObj.txt").toString());
     }
 
     private static final List LEAVES = Arrays.asList(
@@ -104,7 +104,7 @@ public class SerializationDemo {
     }
 
     private static Object deSerialize(String file) {
-        Class<?> c = null;
+        Class<?> clazz = null;
         Object obj = null;
         Field tempField = null;
         Class<?> tempType = null;
@@ -112,7 +112,7 @@ public class SerializationDemo {
         Scanner input;
         try {
             input = new Scanner(new File(file));
-            readFieldInfo(c, obj, tempField, tempType, input, 0);
+            readFieldInfo(clazz, obj, tempField, tempType, input, 0);
         } catch (FileNotFoundException e) {
             System.out.println("Файл не найден : " + file);
             e.printStackTrace();
@@ -123,7 +123,7 @@ public class SerializationDemo {
             System.out.println("Не удалось установить значение в поле : " + tempField);
             e.printStackTrace();
         } catch (InstantiationException e) {
-            System.out.println("Не удалось создать экземпляр класса : " + c);
+            System.out.println("Не удалось создать экземпляр класса : " + clazz);
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
             System.out.println("Не найдено поле");
