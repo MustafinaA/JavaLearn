@@ -1,0 +1,22 @@
+%0part1.lesson08.task02.Person%0
+%0list%0
+%0java.util.List%0
+%0%1java.util.ArrayList%1
+%1java.lang.Integer%1
+%10%1
+%1java.lang.Integer%1
+%11%1
+%1%0
+%0name%0
+%0java.lang.String%0
+%0Иван%0
+%0company%0
+%0part1.lesson08.task02.Company%0
+%0%1part1.lesson08.task02.Company%1
+%1name%1
+%1java.lang.String%1
+%1Alpha%1
+%1address%1
+%1java.lang.String%1
+%1Russia, Kazan, Mira st. 51%1
+%0
