@@ -1,0 +1,30 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS}[%thread]%-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="db" class="ch.qos.logback.classic.db.DBAppender" tableName="study.public.LOGS">
+        <connectionSource
+                class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+            <driverClass>org.postgresql.Driver</driverClass>
+            <url>jdbc:postgresql://localhost:5432/study</url>
+            <user>postgres</user>
+            <password>qwerty</password>
+        </connectionSource>
+        <sqlDialect class="ch.qos.logback.core.db.dialect.PostgreSQLDialect" />
+        <insertHeaders>true</insertHeaders>
+    </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="db" />
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="ASYNC"/>
+    </root>
+
+</configuration>
