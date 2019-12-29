@@ -3,7 +3,10 @@ package part1.lesson16.task01;
 //import ch.qos.logback.classic.Logger;
 //import org.slf4j.LoggerFactory;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+//import org.apache.logging.log4j.Logger;
+//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import part1.lesson15.task02.ConnectionManager.ConnectionManager;
 import part1.lesson15.task02.ConnectionManager.ConnectionManagerJdbcImpl;
 import part1.lesson15.task02.dao.UserDao;
@@ -24,8 +27,8 @@ import java.util.List;
 
 public class Main {
     private static String SQL;
-   // private static Logger logger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Main.class.getName());
-   private static Logger logger = LogManager.getLogger(Main.class);
+    static Logger logger = LoggerFactory.getLogger(Main.class);
+//   private static Logger logger = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
         logger.info("start program");

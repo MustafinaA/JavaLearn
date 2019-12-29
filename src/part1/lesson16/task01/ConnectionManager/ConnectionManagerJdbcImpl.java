@@ -3,7 +3,6 @@ package part1.lesson16.task01.ConnectionManager;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
 /**
  * Класс для работы с соединением к БД
