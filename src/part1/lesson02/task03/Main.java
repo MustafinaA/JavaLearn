@@ -71,7 +71,7 @@ public class Main {
      * @return - имя
      */
     public static String randomName() {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();// Builder из JDK
         while (builder.toString().length() == 0) {
             int length = new Random().nextInt(5) + 5;
             for (int i = 0; i < length; i++) {
